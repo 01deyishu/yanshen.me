@@ -2,28 +2,33 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net/http"
-	"strings"
+	"net"
 )
 
-func sayFuck(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm() //解析参数， 默认不解析
-	fmt.Println(r.Form)
-	fmt.Println("path", r.URL.Path)
-	fmt.Println("scheme", r.URL.Scheme)
-	fmt.Println(r.Form["url_long"])
-	for k, v := range r.Form {
-		fmt.Println("key:", k)
-		fmt.Println("val:", strings.Join(v, ""))
+func main() {
+	fmt.Println("Starting the server ...")
+	listener, err := net.Listen("tcp", "0.0.0.0:9007")
+	if err != nil {
+		fmt.Println("Error listenling", err.Error())
 	}
-	fmt.Fprint(w, "Fuck ?")
+
+	for {
+		conn, err := listener.Accept()
+		if err != nil {
+			fmt.Println("Error Accepting", err.Error())
+		}
+		go doServerStuff(conn)
+	}
 }
 
-func main() {
-	http.HandleFunc("/", sayFuck)
-	err := http.ListenAndServe(":9001", nil)
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
+func doServerStuff(conn net.Conn) {
+	for {
+		buf := make([]byte, 1024)
+		info, err := conn.Read(buf)
+		if err != nil {
+			fmt.Println("Error readint", err.Error())
+			return
+		}
+		fmt.Printf("Received data: %v", string(buf[:info]))
 	}
 }
