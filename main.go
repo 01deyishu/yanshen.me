@@ -2,19 +2,28 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"net"
 	"net/http"
+	//	"reflect"
 )
 
-func HelloServer(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("Inside HelloServer Handler")
-	fmt.Fprintf(w, "Hello, "+req.URL.Path[1:])
+func SimpleServer(w http.ResponseWriter, request *http.Request) {
+	fmt.Fprintf(w, ".")
 }
 
 func main() {
-	http.HandleFunc("/", HelloServer)
-	err := http.ListenAndServe("0.0.0.0:9001", nil)
+	nic, _ := net.Interfaces()
+	//fmt.Println(reflect.TypeOf(nic))
+	for i := 0; i < len(nic); i++ {
+		addr, _ := nic[i].Addrs()
+		if addr != nil {
+			fmt.Printf("NIC name is : %s , Address is %s\n", nic[i].Name, addr)
+		}
+		//fmt.Println(reflect.TypeOf(nic[i]))
+	}
+	http.HandleFunc("/", SimpleServer)
+	err := http.ListenAndServe("0.0.0.0:9007", nil)
 	if err != nil {
-		log.Fatal("ListenAndServe:", err.Error())
+		panic(err)
 	}
 }
