@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net"
+	"os"
 )
 
 func main() {
@@ -17,17 +19,29 @@ func main() {
 			fmt.Println("Error Accept ...", err.Error())
 			return
 		}
-		fmt.Println(conn.RemoteAddr())
+		go writeLog(conn.RemoteAddr().String())
 		go doServerStuff(conn)
 	}
+}
+
+func writeLog(loginfo string) {
+	logfile, err := os.OpenFile("tcp.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		fmt.Println("logfile error")
+	}
+	defer logfile.Close()
+	log.SetOutput(logfile)
+	log.Println(loginfo)
 }
 
 func doServerStuff(conn net.Conn) {
 	for {
 		buf := make([]byte, 1024)
 		len, err := conn.Read(buf)
+		tcpinfo := conn.RemoteAddr().String() + " exit"
 		if err != nil {
 			fmt.Println("Error reading", err.Error())
+			go writeLog(tcpinfo)
 			return
 		}
 		fmt.Printf("Recevied date: %v", string(buf[:len]))
