@@ -9,7 +9,7 @@ import (
 
 func main() {
 	fmt.Println("string server ...")
-	listener, err := net.Listen("tcp", "0.0.0.0:9001")
+	listener, err := net.Listen("tcp", "1.1.1.1:9001")
 	if err != nil {
 		fmt.Println("Error listening", err.Error())
 	}
