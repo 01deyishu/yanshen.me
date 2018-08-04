@@ -78,10 +78,11 @@ func upload(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+        fmt.Println("Start web server, url is : www.yanshen.me")
 	http.HandleFunc("/", sayhelloName)
 	http.HandleFunc("/login", login)
 	http.HandleFunc("/upload", upload)
-	err := http.ListenAndServe(":9001", nil)
+	err := http.ListenAndServe(":80", nil)
 	if err != nil {
 		log.Fatal("ListenAndServer error: ", err)
 	}
