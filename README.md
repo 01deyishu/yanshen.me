@@ -1,2 +1,2 @@
 # yanshen.me
-## yanshen用于练习代码的repo
+## yanshen的个人blog
